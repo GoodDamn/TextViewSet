@@ -61,13 +61,9 @@ public class TextViewSet extends View {
         mPaint.setColor(0xffff0000);
         mPaint.setTextSize(18.0f);
 
-        mPaint.setAlpha(0);
-
         mPaintAnimate = new Paint();
         mPaintAnimate.setColor(0xffff0000);
         mPaintAnimate.setTextSize(18.0f);
-
-        mPaintAnimate.setAlpha(0);
 
         mAnimatorAlpha = new ValueAnimator();
 
@@ -100,7 +96,9 @@ public class TextViewSet extends View {
 
                 mAnimatorAlpha.start();
             }
-            @Override public void onAnimationStart(@NonNull Animator animator) {}
+            @Override public void onAnimationStart(@NonNull Animator animator) {
+                Log.d(TAG, "onAnimationStart: ANIM_INDEX: " + mCurrentAnimationIndex + " OFFSET: " +mOffset );
+            }
             @Override public void onAnimationCancel(@NonNull Animator animator) {}
             @Override public void onAnimationRepeat(@NonNull Animator animator) {}
         });
@@ -207,15 +205,15 @@ public class TextViewSet extends View {
 
         if (from >= mTexts.length) {
             Log.d(TAG, "next: INDEX NOT IN LIMITS [0;"+mTexts.length+"]. IT HAS CHANGED TO -> 0");
-            mCurrentAnimationIndex = 0;
+            mCurrentAnimationIndex = mOffset;
             return;
         }
 
+        Log.d(TAG, "next: ANIMATION_INDEX: " + mCurrentAnimationIndex + " FROM: " + from);
+
         mIsManualPlay = true;
-        mCurrentAnimationIndex = (byte) from;
+        mCurrentAnimationIndex = (byte) (from+mOffset);
         mAnimatorAlpha.start();
-        mPaint.setAlpha(255);
-        mPaintAnimate.setAlpha(255);
     }
 
     public void setAntiAlias(boolean aa) {
@@ -227,8 +225,6 @@ public class TextViewSet extends View {
         mIsManualPlay = false;
         mCurrentAnimationIndex = mOffset;
         mAnimatorAlpha.start();
-        mPaint.setAlpha(255);
-        mPaintAnimate.setAlpha(255);
     }
 
     @Override
