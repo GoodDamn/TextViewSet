@@ -1,8 +1,10 @@
-package good.damn.textviewset;
+package good.damn.textviewsetapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import good.damn.textviewset.TextViewSet;
 
 public class MainActivity extends AppCompatActivity {
 
