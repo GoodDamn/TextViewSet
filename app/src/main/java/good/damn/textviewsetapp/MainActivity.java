@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         textViewSet.setTextInterval(15.0f);
         textViewSet.setTextSize(18.0f * metrics.density);
         textViewSet.setTextColor(0xffffffff);
-
+        textViewSet.setSourceOffset(5);
         textViewSet.setListener(new TextViewSetListener() {
             @Override
             public void onFinish() {
@@ -36,25 +36,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        textViewSet.setAnimation(TextViewSet.ANIMATION_ALPHA);
+
         textViewSet.setSource(new String[]{
                 "Night",
                 "Fun",
                 "Love",
                 "Programming",
                 "Computer Science",
-                "Night",
-                "Fun",
-                "Love",
-                "Programming",
-                "Computer Science",
-                "Night",
-                "Fun",
-                "Love",
-                "Programming",
-                "Computer Science"
+                "Day",
+                "Cup",
+                "Headphones",
+                "CPU",
+                "GPU",
+                "Keyboard",
+                "Mice",
+                "Notepad"
         });
 
         setContentView(textViewSet);
-        textViewSet.next(5);
+        textViewSet.start();
     }
 }

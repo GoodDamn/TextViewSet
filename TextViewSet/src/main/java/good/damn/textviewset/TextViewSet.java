@@ -21,6 +21,9 @@ public class TextViewSet extends View {
 
     private static final String TAG = "TextViewSet";
 
+    public static final byte ANIMATION_SEQUENCE = 0;
+    public static final byte ANIMATION_ALPHA = 1;
+
     private Paint mPaint;
     private Paint mPaintAnimate;
 
@@ -29,8 +32,10 @@ public class TextViewSet extends View {
     private ValueAnimator mAnimatorAlpha;
 
     private TextViewSetListener mSetListener;
+    private OnDrawAnimation mOnDrawAnimation;
 
     private byte mCurrentAnimationIndex;
+    private byte mOffset;
 
     private float mBeginY;
     private float midWidth;
@@ -50,6 +55,7 @@ public class TextViewSet extends View {
 
     private void init() {
         mTextInterval = 0;
+        mOffset = 0;
 
         mPaint = new Paint();
         mPaint.setColor(0xffff0000);
@@ -94,6 +100,8 @@ public class TextViewSet extends View {
             @Override public void onAnimationCancel(@NonNull Animator animator) {}
             @Override public void onAnimationRepeat(@NonNull Animator animator) {}
         });
+
+        setAnimation(ANIMATION_SEQUENCE);
     }
 
     public TextViewSet(Context context) {
@@ -113,6 +121,49 @@ public class TextViewSet extends View {
 
     public void setListener(TextViewSetListener listener) {
         mSetListener = listener;
+    }
+
+    public void setAnimation(byte animation) {
+        switch (animation) {
+            case ANIMATION_ALPHA:
+                mOnDrawAnimation = new OnDrawAnimation() {
+                    @Override
+                    public void onDraw(Canvas canvas) {
+                        canvas.drawText(mTexts[mCurrentAnimationIndex].getText(),
+                                midWidth-mTexts[mCurrentAnimationIndex].getWidth() / 2,
+                                midHeight-mPaintAnimate.getTextSize()/2,
+                                mPaintAnimate);
+                        if (mCurrentAnimationIndex-1 >= mOffset) {
+                            mPaintAnimate.setAlpha(255-mPaintAnimate.getAlpha());
+                            canvas.drawText(mTexts[mCurrentAnimationIndex - 1].getText(),
+                                    midWidth - mTexts[mCurrentAnimationIndex-1].getWidth() / 2,
+                                    midHeight - mPaintAnimate.getTextSize() / 2,
+                                    mPaintAnimate);
+                        }
+                    }
+                };
+                break;
+            default:
+                mOnDrawAnimation = new OnDrawAnimation() {
+                    @Override
+                    public void onDraw(Canvas canvas) {
+                        float y = mPaint.getTextSize();
+                        for (byte i = mOffset; i < mCurrentAnimationIndex; i++) {
+                            canvas.drawText(mTexts[i].getText(),midWidth-mTexts[i].getWidth()/ 2,mBeginY+y,mPaint);
+                            y += mPaint.getTextSize() + mTextInterval;
+                        }
+
+                        canvas.drawText(mTexts[mCurrentAnimationIndex].getText(),
+                                midWidth-mTexts[mCurrentAnimationIndex].getWidth() / 2,
+                                mBeginY+y,
+                                mPaintAnimate);
+                    }
+                };
+        }
+    }
+
+    public void setSourceOffset(int offset) {
+        mOffset = (byte) offset;
     }
 
     public void setTextInterval(float interval) {
@@ -166,7 +217,7 @@ public class TextViewSet extends View {
 
     public void start() {
         mIsManualPlay = false;
-        mCurrentAnimationIndex = 0;
+        mCurrentAnimationIndex = mOffset;
         mAnimatorAlpha.start();
     }
 
@@ -177,17 +228,7 @@ public class TextViewSet extends View {
         if (mCurrentAnimationIndex >= mTexts.length) {
             mCurrentAnimationIndex = (byte) (mTexts.length-1);
         }
-
-        float y = mPaint.getTextSize();
-        for (byte i = 0; i < mCurrentAnimationIndex; i++) {
-            canvas.drawText(mTexts[i].getText(),midWidth-mTexts[i].getWidth()/ 2,mBeginY+y,mPaint);
-            y += mPaint.getTextSize() + mTextInterval;
-        }
-
-        canvas.drawText(mTexts[mCurrentAnimationIndex].getText(),
-                midWidth-mTexts[mCurrentAnimationIndex].getWidth() / 2,
-                mBeginY+y,
-                mPaintAnimate);
+        mOnDrawAnimation.onDraw(canvas);
     }
 
     @Override
@@ -199,4 +240,7 @@ public class TextViewSet extends View {
         setBeginY();
     }
 
+    private interface OnDrawAnimation{
+        void onDraw(Canvas canvas);
+    }
 }
