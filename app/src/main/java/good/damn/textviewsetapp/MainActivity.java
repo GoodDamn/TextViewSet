@@ -3,6 +3,7 @@ package good.damn.textviewsetapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 
 import good.damn.textviewset.TextViewSet;
@@ -54,6 +55,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setContentView(textViewSet);
-        textViewSet.start();
+        textViewSet.next(5);
     }
 }

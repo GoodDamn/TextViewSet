@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.ColorInt;
@@ -36,6 +37,8 @@ public class TextViewSet extends View {
     private float midHeight;
 
     private float mTextInterval;
+
+    private boolean mIsManualPlay = false;
 
     private void setBeginY() {
         if (mTexts == null) {
@@ -78,6 +81,13 @@ public class TextViewSet extends View {
                     }
                     return;
                 }
+
+                if (mIsManualPlay) {
+                    mIsManualPlay = false;
+                    mCurrentAnimationIndex--;
+                    return;
+                }
+
                 mAnimatorAlpha.start();
             }
             @Override public void onAnimationStart(@NonNull Animator animator) {}
@@ -132,7 +142,30 @@ public class TextViewSet extends View {
         }
     }
 
+    public void next() {
+        next((byte) (mCurrentAnimationIndex+1));
+    }
+
+    public void next(int from) {
+
+        if (from >= mTexts.length) {
+            Log.d(TAG, "next: INDEX NOT IN LIMITS [0;"+mTexts.length+"]. IT HAS CHANGED TO -> 0");
+            mCurrentAnimationIndex = 0;
+            return;
+        }
+
+        mIsManualPlay = true;
+        mCurrentAnimationIndex = (byte) from;
+        mAnimatorAlpha.start();
+    }
+
+    public void setAntiAlias(boolean aa) {
+        mPaint.setAntiAlias(aa);
+        mPaintAnimate.setAntiAlias(aa);
+    }
+
     public void start() {
+        mIsManualPlay = false;
         mCurrentAnimationIndex = 0;
         mAnimatorAlpha.start();
     }
