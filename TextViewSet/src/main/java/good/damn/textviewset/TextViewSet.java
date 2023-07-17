@@ -13,6 +13,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import good.damn.textviewset.interfaces.TextViewSetListener;
 import good.damn.textviewset.models.Text;
 
 public class TextViewSet extends View {
@@ -26,13 +27,27 @@ public class TextViewSet extends View {
 
     private ValueAnimator mAnimatorAlpha;
 
+    private TextViewSetListener mSetListener;
+
     private byte mCurrentAnimationIndex;
 
     private float mBeginY;
     private float midWidth;
     private float midHeight;
 
+    private float mTextInterval;
+
+    private void setBeginY() {
+        if (mTexts == null) {
+            return;
+        }
+
+        mBeginY = midHeight - (mPaint.getTextSize()+mTextInterval) * mTexts.length / 2;
+    }
+
     private void init() {
+        mTextInterval = 0;
+
         mPaint = new Paint();
         mPaint.setColor(0xffff0000);
         mPaint.setTextSize(18.0f);
@@ -58,6 +73,9 @@ public class TextViewSet extends View {
             public void onAnimationEnd(@NonNull Animator animator) {
                 mCurrentAnimationIndex++;
                 if (mCurrentAnimationIndex >= mTexts.length) {
+                    if (mSetListener != null) {
+                        mSetListener.onFinish();
+                    }
                     return;
                 }
                 mAnimatorAlpha.start();
@@ -81,6 +99,15 @@ public class TextViewSet extends View {
     public TextViewSet(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+    public void setListener(TextViewSetListener listener) {
+        mSetListener = listener;
+    }
+
+    public void setTextInterval(float interval) {
+        mTextInterval = interval;
+        setBeginY();
     }
 
     public void setTextSize(float size) {
@@ -121,7 +148,7 @@ public class TextViewSet extends View {
         float y = mPaint.getTextSize();
         for (byte i = 0; i < mCurrentAnimationIndex; i++) {
             canvas.drawText(mTexts[i].getText(),midWidth-mTexts[i].getWidth()/ 2,mBeginY+y,mPaint);
-            y += mPaint.getTextSize();
+            y += mPaint.getTextSize() + mTextInterval;
         }
 
         canvas.drawText(mTexts[mCurrentAnimationIndex].getText(),
@@ -136,7 +163,7 @@ public class TextViewSet extends View {
         midWidth = getWidth() >> 1;
         midHeight = getHeight() >> 1;
 
-        mBeginY = midHeight - mPaint.getTextSize() * mTexts.length / 2;
+        setBeginY();
     }
 
 }
