@@ -17,6 +17,16 @@ public class MainActivity extends AppCompatActivity {
                 "Fun",
                 "Love",
                 "Programming",
+                "Computer Science",
+                "Night",
+                "Fun",
+                "Love",
+                "Programming",
+                "Computer Science",
+                "Night",
+                "Fun",
+                "Love",
+                "Programming",
                 "Computer Science"
         });
 

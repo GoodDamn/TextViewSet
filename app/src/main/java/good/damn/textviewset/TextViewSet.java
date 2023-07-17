@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -83,8 +84,19 @@ public class TextViewSet extends View {
         init();
     }
 
+    public void setTextSize(float size) {
+        mPaint.setTextSize(size);
+        mPaintAnimate.setTextSize(size);
+    }
+
+    public void setTextColor(@ColorInt int color) {
+        mPaint.setColor(color);
+        mPaintAnimate.setColor(color);
+    }
+
     public void setTypeface(Typeface typeface) {
         mPaint.setTypeface(typeface);
+        mPaintAnimate.setTypeface(typeface);
     }
 
     public void setSource(String[] arr) {
@@ -104,11 +116,8 @@ public class TextViewSet extends View {
         super.onDraw(canvas);
 
         if (mCurrentAnimationIndex >= mTexts.length) {
-            mCurrentAnimationIndex = 4;
+            mCurrentAnimationIndex = (byte) (mTexts.length-1);
         }
-
-        canvas.drawLine(midWidth,0,midWidth,getHeight(),mPaint);
-        canvas.drawLine(0,midHeight,getWidth(),midHeight,mPaint);
 
         float y = mPaint.getTextSize();
         for (byte i = 0; i < mCurrentAnimationIndex; i++) {
