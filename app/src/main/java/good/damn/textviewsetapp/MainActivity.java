@@ -55,6 +55,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setContentView(textViewSet);
-        textViewSet.start();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                textViewSet.next();
+            }
+        },5000);
+
     }
 }

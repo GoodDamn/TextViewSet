@@ -61,9 +61,13 @@ public class TextViewSet extends View {
         mPaint.setColor(0xffff0000);
         mPaint.setTextSize(18.0f);
 
+        mPaint.setAlpha(0);
+
         mPaintAnimate = new Paint();
         mPaintAnimate.setColor(0xffff0000);
         mPaintAnimate.setTextSize(18.0f);
+
+        mPaintAnimate.setAlpha(0);
 
         mAnimatorAlpha = new ValueAnimator();
 
@@ -124,6 +128,7 @@ public class TextViewSet extends View {
     }
 
     public void setAnimation(byte animation) {
+
         switch (animation) {
             case ANIMATION_ALPHA:
                 mOnDrawAnimation = new OnDrawAnimation() {
@@ -164,6 +169,7 @@ public class TextViewSet extends View {
 
     public void setSourceOffset(int offset) {
         mOffset = (byte) offset;
+        mCurrentAnimationIndex = mOffset;
     }
 
     public void setTextInterval(float interval) {
@@ -208,6 +214,8 @@ public class TextViewSet extends View {
         mIsManualPlay = true;
         mCurrentAnimationIndex = (byte) from;
         mAnimatorAlpha.start();
+        mPaint.setAlpha(255);
+        mPaintAnimate.setAlpha(255);
     }
 
     public void setAntiAlias(boolean aa) {
@@ -219,6 +227,8 @@ public class TextViewSet extends View {
         mIsManualPlay = false;
         mCurrentAnimationIndex = mOffset;
         mAnimatorAlpha.start();
+        mPaint.setAlpha(255);
+        mPaintAnimate.setAlpha(255);
     }
 
     @Override
